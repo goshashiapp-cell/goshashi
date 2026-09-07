@@ -15,18 +15,15 @@ try {
 // Production mode for live deployments
 const dev = false;
 
-// Listen on Hostinger's assigned port (process.env.PORT)
-const rawPort = process.env.PORT || process.env.WEB_PORT || '3000';
+// Listen on Passenger / Hostinger assigned port or socket
+const rawPort = process.env.PORT || '3000';
 const port = isNaN(Number(rawPort)) ? rawPort : parseInt(rawPort, 10);
-const hostname = '0.0.0.0';
 
 const webDir = path.join(__dirname, 'apps', 'web');
 
 const app = next({
   dev,
   dir: webDir,
-  hostname: typeof port === 'number' ? hostname : undefined,
-  port: typeof port === 'number' ? port : undefined,
 });
 const handle = app.getRequestHandler();
 
@@ -46,8 +43,8 @@ app
       }
     });
 
-    server.listen(port, hostname, () => {
-      console.log(`> GoShashi Web Server ready on ${hostname}:${port} (production mode)`);
+    server.listen(port, () => {
+      console.log(`> GoShashi Web Server ready on port ${port} (production mode)`);
     });
   })
   .catch((err) => {

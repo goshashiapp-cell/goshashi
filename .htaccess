@@ -1,0 +1,23 @@
+# GoShashi - Production LiteSpeed / Passenger Configuration
+Options -Indexes
+
+# 1. Protect sensitive files and source code
+<FilesMatch "^(\.env|\.git|package\.json|package-lock\.json|tsconfig.*|README\.md)">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+<FilesMatch "\.(ts|tsx|json|md|prisma|sql|yml|yaml|log)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
