@@ -1,15 +1,36 @@
-# GoShashi - Hostinger LiteSpeed / Apache Configuration
-DirectoryIndex disabled
+# GoShashi - Production Server Configuration (Hostinger / Apache / LiteSpeed)
+Options -Indexes
 
+# 1. Block access to sensitive source code, environment files, and configurations
+<FilesMatch "^(\.env|\.git|package\.json|package-lock\.json|tsconfig.*|server\.js|README\.md)">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+<FilesMatch "\.(ts|tsx|json|md|prisma|sql|yml|yaml|log)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>
+
+# 2. Routing and Proxy to Node.js
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  # Allow static files if present
-  RewriteCond %{REQUEST_FILENAME} -f [OR]
-  RewriteCond %{REQUEST_FILENAME} -d
+  # Serve real static files directly (images, favicon, robots.txt, etc.)
+  RewriteCond %{REQUEST_FILENAME} -f
   RewriteRule ^ - [L]
 
-  # Reverse proxy to Node.js application running on standard internal port
+  # Route all requests (including root /) to Node.js application
   RewriteRule ^(.*)$ http://127.0.0.1:3000/$1 [P,L]
 </IfModule>
