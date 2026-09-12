@@ -41,6 +41,8 @@ export default function ProfilePage() {
   });
   const [savedSuccess, setSavedSuccess] = useState(false);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const saved = localStorage.getItem('gs_user');
     if (saved) {
@@ -49,30 +51,17 @@ export default function ProfilePage() {
         setUser(parsed);
         setFormData((prev) => ({
           ...prev,
-          name: parsed.name || 'Shashi Kumar',
-          email: parsed.email || 'shashi.customer@goshashi.com',
-          mobile: parsed.mobile || '9811122233',
+          name: parsed.name || '',
+          email: parsed.email || '',
+          mobile: parsed.mobile || '',
         }));
       } catch {
-        // ignore
+        setUser(null);
       }
     } else {
-      // Default sample customer
-      const defaultUser = {
-        id: 'usr-customer-003',
-        name: 'Shashi Kumar',
-        email: 'shashi.customer@goshashi.com',
-        mobile: '9811122233',
-        role: 'CUSTOMER',
-      };
-      setUser(defaultUser);
-      setFormData((prev) => ({
-        ...prev,
-        name: defaultUser.name,
-        email: defaultUser.email,
-        mobile: defaultUser.mobile,
-      }));
+      setUser(null);
     }
+    setLoading(false);
   }, []);
 
   const handleSave = (e: React.FormEvent) => {
@@ -91,16 +80,53 @@ export default function ProfilePage() {
     setTimeout(() => setSavedSuccess(false), 3000);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('gs_user');
-    localStorage.removeItem('gs_token');
-    router.push('/login');
+  const handleLogout = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    try {
+      localStorage.removeItem('gs_user');
+      localStorage.removeItem('gs_token');
+      sessionStorage.clear();
+      // Clear cookies
+      document.cookie.split(';').forEach((c) => {
+        document.cookie = c
+          .replace(/^ +/, '')
+          .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+      });
+    } catch {
+      // ignore
+    }
+    setUser(null);
+    window.location.href = '/login';
   };
 
-  if (!user) {
+  if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
         <p className="text-sm text-slate-500">Loading your profile...</p>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="max-w-md mx-auto px-4 py-24 text-center space-y-6">
+        <div className="w-16 h-16 rounded-3xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto shadow-sm">
+          <User className="w-8 h-8" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-black text-slate-900 tracking-tight">You are Signed Out</h2>
+          <p className="text-xs text-slate-500">
+            Please sign in with your account credentials to view and manage your profile.
+          </p>
+        </div>
+        <div className="pt-2">
+          <Link
+            href="/login"
+            className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md shadow-brand-600/25 transition-all"
+          >
+            Sign In to GoShashi
+          </Link>
+        </div>
       </div>
     );
   }
@@ -141,10 +167,11 @@ export default function ProfilePage() {
             </Link>
           )}
           <button
+            type="button"
             onClick={handleLogout}
-            className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 font-bold text-xs transition-colors flex items-center gap-1.5"
+            className="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
           >
-            <LogOut className="w-4 h-4" /> Sign Out
+            <LogOut className="w-4 h-4 text-rose-500" /> Sign Out
           </button>
         </div>
       </div>

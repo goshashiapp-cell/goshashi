@@ -11,6 +11,7 @@ import {
   X,
   ShieldCheck,
   ChevronDown,
+  LogOut,
 } from 'lucide-react';
 
 export default function Navbar() {
@@ -36,6 +37,23 @@ export default function Navbar() {
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem('gs_token');
+      localStorage.removeItem('gs_user');
+      sessionStorage.clear();
+      document.cookie.split(';').forEach((c) => {
+        document.cookie = c
+          .replace(/^ +/, '')
+          .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+      });
+    } catch {
+      // ignore
+    }
+    setUser(null);
+    window.location.href = '/login';
+  };
 
   return (
     <header
@@ -123,6 +141,14 @@ export default function Navbar() {
                 >
                   <span>Bookings</span>
                 </Link>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="p-2 rounded-xl border border-slate-200 text-slate-500 hover:text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition-colors cursor-pointer"
+                  title="Sign Out"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
               </div>
             ) : (
               <Link
@@ -195,15 +221,11 @@ export default function Navbar() {
           <div className="pt-2 border-t border-slate-100">
             {user ? (
               <button
-                onClick={() => {
-                  localStorage.removeItem('gs_token');
-                  localStorage.removeItem('gs_user');
-                  setUser(null);
-                  window.location.reload();
-                }}
-                className="w-full text-left px-3 py-2 text-rose-600 font-medium"
+                type="button"
+                onClick={handleLogout}
+                className="w-full text-left px-3 py-2 text-rose-600 font-bold flex items-center gap-2 cursor-pointer"
               >
-                Log Out
+                <LogOut className="w-4 h-4" /> Log Out
               </button>
             ) : (
               <Link
