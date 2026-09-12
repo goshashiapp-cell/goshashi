@@ -21,15 +21,42 @@ export default function LoginPage() {
       // Demo credential handling
       if (identifier.includes('admin')) {
         localStorage.setItem('gs_token', 'demo-jwt-admin-token');
-        localStorage.setItem('gs_user', JSON.stringify({ name: 'GoShashi Admin', role: 'ADMIN' }));
+        localStorage.setItem(
+          'gs_user',
+          JSON.stringify({
+            id: 'usr-admin-001',
+            name: 'GoShashi Admin',
+            email: 'admin@goshashi.com',
+            mobile: '9876543210',
+            role: 'ADMIN',
+          }),
+        );
         router.push('/admin');
       } else if (identifier.includes('partner') || identifier === '9899988877') {
         localStorage.setItem('gs_token', 'demo-jwt-partner-token');
-        localStorage.setItem('gs_user', JSON.stringify({ name: 'Rajesh Sharma', role: 'PARTNER' }));
+        localStorage.setItem(
+          'gs_user',
+          JSON.stringify({
+            id: 'usr-partner-002',
+            name: 'Rajesh Sharma',
+            email: 'rajesh.partner@goshashi.com',
+            mobile: '9899988877',
+            role: 'PARTNER',
+          }),
+        );
         router.push('/partner');
       } else {
         localStorage.setItem('gs_token', 'demo-jwt-customer-token');
-        localStorage.setItem('gs_user', JSON.stringify({ name: 'Shashi Kumar', role: 'CUSTOMER' }));
+        localStorage.setItem(
+          'gs_user',
+          JSON.stringify({
+            id: 'usr-customer-003',
+            name: 'Shashi Kumar',
+            email: 'shashi.customer@goshashi.com',
+            mobile: '9811122233',
+            role: 'CUSTOMER',
+          }),
+        );
         router.push('/bookings');
       }
       setLoading(false);

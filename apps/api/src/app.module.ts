@@ -10,6 +10,8 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { PartnerModule } from './modules/partner/partner.module';
 import { AdminModule } from './modules/admin/admin.module';
 
+import { UsersModule } from './modules/users/users.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -24,6 +26,7 @@ import { AdminModule } from './modules/admin/admin.module';
     PaymentsModule,
     PartnerModule,
     AdminModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

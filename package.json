@@ -23,7 +23,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md}\"",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "test": "node --test packages/config/test/business-rules.test.mjs",
+    "test": "node --test packages/config/test/business-rules.test.mjs test/user-access-control.test.mjs",
     "test:e2e": "npm run test:e2e --workspaces --if-present",
     "db:migrate": "prisma migrate dev",
     "db:generate": "prisma generate",

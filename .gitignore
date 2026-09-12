@@ -45,3 +45,4 @@ prisma/*.db-journal
 uploads/
 storage/
 scratch/
+*.tsbuildinfo

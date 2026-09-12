@@ -2,10 +2,11 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { PartnerMatchingService } from './partner-matching.service';
-import { OrderStatus, PaymentStatus } from '@prisma/client';
+import { OrderStatus, PaymentStatus, RoleType } from '@prisma/client';
 import { BUSINESS_CONFIG } from '@goshashi/config';
 
 @Injectable()
@@ -179,7 +180,15 @@ export class OrdersService {
     });
   }
 
-  async getOrderById(orderId: string) {
+  async getOrderById(
+    orderId: string,
+    requestingUser?: {
+      userId?: string;
+      customerId?: string;
+      partnerId?: string;
+      roles?: string[];
+    },
+  ) {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
       include: {
@@ -199,6 +208,24 @@ export class OrdersService {
 
     if (!order) {
       throw new NotFoundException('Order not found');
+    }
+
+    if (requestingUser) {
+      const isAdmin =
+        requestingUser.roles?.includes(RoleType.ADMIN) ||
+        requestingUser.roles?.includes(RoleType.SUPER_ADMIN) ||
+        requestingUser.roles?.includes(RoleType.OPERATIONS);
+
+      const isOwnerCustomer =
+        requestingUser.customerId && order.customerId === requestingUser.customerId;
+      const isAssignedPartner =
+        requestingUser.partnerId && order.partnerId === requestingUser.partnerId;
+
+      if (!isAdmin && !isOwnerCustomer && !isAssignedPartner) {
+        throw new ForbiddenException(
+          'Access denied: You do not have permission to view other users\' order details',
+        );
+      }
     }
 
     return order;

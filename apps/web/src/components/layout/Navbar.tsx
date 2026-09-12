@@ -108,13 +108,22 @@ export default function Navbar() {
             </Link>
 
             {user ? (
-              <Link
-                href="/bookings"
-                className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-50 text-brand-700 font-semibold text-sm border border-brand-200 hover:bg-brand-100 transition-colors"
-              >
-                <User className="w-4 h-4" />
-                <span>{user.name || 'My Account'}</span>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/profile"
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors"
+                  title="My Profile"
+                >
+                  <User className="w-3.5 h-3.5 text-brand-600" />
+                  <span>{user.name?.split(' ')[0] || 'Profile'}</span>
+                </Link>
+                <Link
+                  href="/bookings"
+                  className="flex items-center gap-1 px-3 py-2 rounded-xl bg-brand-50 text-brand-700 font-bold text-xs border border-brand-200 hover:bg-brand-100 transition-colors"
+                >
+                  <span>Bookings</span>
+                </Link>
+              </div>
             ) : (
               <Link
                 href="/login"
@@ -154,6 +163,13 @@ export default function Navbar() {
             className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50"
           >
             Explore Services
+          </Link>
+          <Link
+            href="/profile"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block px-3 py-2 rounded-lg text-base font-medium text-slate-700 hover:bg-slate-50"
+          >
+            My Profile
           </Link>
           <Link
             href="/bookings"
